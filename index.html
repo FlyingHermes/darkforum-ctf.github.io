@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DarkForum - Underground Community</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0a0e27;
+            --bg-darker: #050814;
+            --accent-green: #00ff41;
+            --accent-cyan: #00fff9;
+            --accent-pink: #ff00c1;
+            --text-muted: #8892b0;
+            --border-color: #1e2749;
+        }
+
+        * {
+            font-family: 'Fira Code', monospace;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            color: #ccd6f6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 65, 0.03) 2px, rgba(0, 255, 65, 0.03) 4px);
+            pointer-events: none;
+            z-index: 1;
+            animation: scanlines 8s linear infinite;
+        }
+
+        @keyframes scanlines {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(20px); }
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header */
+        .forum-header {
+            background: rgba(10, 14, 39, 0.95);
+            border-bottom: 2px solid var(--accent-green);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 255, 65, 0.1);
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 65, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px var(--accent-green)); }
+            to { filter: drop-shadow(0 0 20px var(--accent-green)); }
+        }
+
+        .stats-badge {
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin: 0 0.25rem;
+        }
+
+        /* Forum Posts */
+        .forum-post {
+            background: rgba(30, 39, 73, 0.4);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-green);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .forum-post:hover {
+            transform: translateX(5px);
+            border-left-color: var(--accent-cyan);
+            box-shadow: -5px 0 20px rgba(0, 255, 65, 0.2);
+            background: rgba(30, 39, 73, 0.6);
+        }
+
+        .post-title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-title:hover {
+            color: var(--accent-green);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .tag-sell { background: rgba(255, 59, 48, 0.2); color: #ff3b30; border: 1px solid #ff3b30; }
+        .tag-buy { background: rgba(52, 199, 89, 0.2); color: #34c759; border: 1px solid #34c759; }
+        .tag-tool { background: rgba(0, 122, 255, 0.2); color: #007aff; border: 1px solid #007aff; }
+        .tag-help { background: rgba(255, 149, 0, 0.2); color: #ff9500; border: 1px solid #ff9500; }
+
+        .user-badge {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .post-stats i {
+            color: var(--accent-green);
+        }
+
+        /* Profile Button */
+        .profile-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-green);
+            background: rgba(0, 255, 65, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .profile-btn:hover {
+            background: var(--accent-green);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--accent-green);
+        }
+
+        .profile-btn i {
+            font-size: 1.5rem;
+            color: var(--accent-green);
+        }
+
+        .profile-btn:hover i {
+            color: var(--bg-dark);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(0, 255, 65, 0); }
+        }
+
+        /* Chat Modal */
+        .chat-modal {
+            background: rgba(5, 8, 20, 0.98);
+            backdrop-filter: blur(10px);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.1), rgba(0, 255, 249, 0.1));
+            border-bottom: 2px solid var(--accent-green);
+        }
+
+        .chat-messages {
+            background: rgba(10, 14, 39, 0.5);
+            border: 1px solid var(--border-color);
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 4px;
+        }
+
+        .message-bubble {
+            background: rgba(30, 39, 73, 0.6);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-cyan);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .avatar-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .typing-indicator {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-10px); opacity: 1; }
+        }
+
+        .close-btn {
+            background: rgba(255, 59, 48, 0.2);
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #ff3b30;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .message-text a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--accent-cyan);
+            transition: all 0.3s ease;
+        }
+
+        .message-text a:hover {
+            color: var(--accent-green);
+            border-bottom-color: var(--accent-green);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(30, 39, 73, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .online-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .online-user:hover {
+            background: rgba(0, 255, 65, 0.1);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Улучшенная читаемость текста */
+        .forum-post p {
+            color: #ccd6f6 !important;
+            line-height: 1.6;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Живые уведомления */
+        .notification-bar {
+            background: linear-gradient(90deg, rgba(0, 255, 65, 0.1), rgba(0, 255, 249, 0.1));
+            border-left: 4px solid var(--accent-green);
+            animation: slideInRight 0.5s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-bar.fade-out {
+            animation: slideOutRight 0.5s ease forwards;
+        }
+
+        @keyframes slideOutRight {
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Живой счетчик онлайна */
+        .online-count {
+            animation: countPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes countPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Эффект печати для новых сообщений */
+        .new-activity {
+            animation: highlight 2s ease;
+        }
+
+        @keyframes highlight {
+            0% { background: rgba(0, 255, 65, 0.3); }
+            100% { background: transparent; }
+        }
+
+        /* Живая статистика */
+        .stat-number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: numberGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes numberGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        /* Чат в реальном времени на главной */
+        .live-chat {
+            background: rgba(30, 39, 73, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .chat-message {
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(30, 39, 73, 0.3);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message:hover {
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        .chat-message .username {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .chat-message .text {
+            color: #ccd6f6;
+            font-size: 0.9rem;
+        }
+
+        .chat-message .time {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        /* Анимация появления постов */
+        .forum-post {
+            animation: fadeInScale 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .forum-post:nth-child(1) { animation-delay: 0.1s; }
+        .forum-post:nth-child(2) { animation-delay: 0.2s; }
+        .forum-post:nth-child(3) { animation-delay: 0.3s; }
+        .forum-post:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Живой индикатор активности */
+        .activity-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        /* Эффект мерцания для горячих тем */
+        .hot-topic {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hot-topic::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 255, 65, 0.1),
+                transparent
+            );
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Улучшенный scrollbar для чата */
+        .live-chat::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .live-chat::-webkit-scrollbar-track {
+            background: rgba(10, 14, 39, 0.5);
+        }
+
+        .live-chat::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 3px;
+        }
+
+        .live-chat::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        /* Ticker для новостей */
+        .news-ticker {
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid var(--accent-green);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ticker-content {
+            display: flex;
+            animation: ticker 30s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .ticker-item {
+            padding: 0 3rem;
+            color: var(--accent-green);
+        }
+
+        /* Улучшенные онлайн пользователи */
+        .online-user {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .online-user:nth-child(1) { animation-delay: 0.1s; }
+        .online-user:nth-child(2) { animation-delay: 0.2s; }
+        .online-user:nth-child(3) { animation-delay: 0.3s; }
+        .online-user:nth-child(4) { animation-delay: 0.4s; }
+        .online-user:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Значки рангов */
+        .rank-badge {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            margin-left: 0.5rem;
+        }
+
+        .rank-admin { background: #ff3b30; color: white; }
+        .rank-vip { background: #ffd700; color: #000; }
+        .rank-trusted { background: #34c759; color: white; }
+        .rank-newbie { background: #8e8e93; color: white; }
+
+        /* Последние сделки */
+        .deal-item {
+            background: rgba(30, 39, 73, 0.3);
+            border-left: 3px solid var(--accent-cyan);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            animation: slideInLeft 0.5s ease;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .deal-amount {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <!-- Header -->
+        <header class="forum-header py-3 sticky-top">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <h1 class="logo-text mb-0">
+                            <i class="bi bi-shield-lock-fill"></i> DarkForum
+                        </h1>
+                        <div class="d-none d-md-flex">
+                            <span class="stats-badge online-count">
+                                <i class="bi bi-people-fill"></i> 
+                                <span id="online-count">1,337</span> онлайн
+                            </span>
+                            <span class="stats-badge"><i class="bi bi-chat-dots-fill"></i> 42,069 тем</span>
+                        </div>
+                    </div>
+                    <div class="profile-btn" id="profile-icon">
+                        <i class="bi bi-envelope-fill"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            1
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- News Ticker -->
+        <div class="news-ticker py-2">
+            <div class="ticker-content">
+                <span class="ticker-item">🔥 ВНИМАНИЕ: Новая уязвимость 0day в популярном CMS обнаружена!</span>
+                <span class="ticker-item">💰 Крупная сделка: 5 BTC за доступ к корп. сети</span>
+                <span class="ticker-item">⚠️ Пользователь "black_hat_pro" получил статус TRUSTED</span>
+                <span class="ticker-item">🎯 Новый дамп БД: 10M записей клиентов банка</span>
+                <span class="ticker-item">🛡️ Обновление: Улучшенная защита форума от DDOS</span>
+            </div>
+        </div>
+
+        <!-- Live Notifications -->
+        <div class="container mt-3" id="notification-container"></div>
+
+        <!-- Main Content -->
+        <div class="container my-4">
+            <div class="row">
+                <!-- Forum Posts -->
+                <div class="col-lg-8">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="text-white"><i class="bi bi-fire"></i> Горячие темы</h2>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-success active">Новые</button>
+                            <button class="btn btn-outline-success">Популярные</button>
+                            <button class="btn btn-outline-success">Топ дня</button>
+                        </div>
+                    </div>
+
+                    <!-- Post 1 -->
+                    <div class="forum-post rounded p-3 mb-3 hot-topic">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <span class="tag tag-sell">ПРОДАМ</span>
+                                <h3 class="post-title d-inline">База данных "Банановый рай"</h3>
+                            </div>
+                            <span class="badge bg-danger">HOT</span>
+                        </div>
+                        <p class="mb-3">Свежая база данных. 1 млн строк. Почты, телефоны, хеши паролей. Гарант за ваш счет. Полный дамп БД с персональными данными клиентов. Данные актуальны на сегодня!</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="user-badge">
+                                    <i class="bi bi-person-badge"></i> shadow_seller
+                                    <span class="rank-badge rank-trusted">TRUSTED</span>
+                                </span>
+                                <span class="text-muted small"><i class="bi bi-clock"></i> 1 час назад</span>
+                            </div>
+                            <div class="post-stats">
+                                <span><i class="bi bi-chat-fill"></i> 23</span>
+                                <span><i class="bi bi-eye-fill"></i> 156</span>
+                                <span><i class="bi bi-heart-fill"></i> 45</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 2 -->
+                    <div class="forum-post rounded p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <span class="tag tag-buy">КУПЛЮ</span>
+                                <h3 class="post-title d-inline">Доступ к серверу конкурента</h3>
+                            </div>
+                            <span class="badge bg-warning text-dark">VIP</span>
+                        </div>
+                        <p class="mb-3">Нужен постоянный доступ к веб-серверу. Оплата высокая, обсуждается в ЛС. Интересуют ssh/rdp доступы. Долгосрочное сотрудничество гарантировано. Работаю только через гаранта!</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="user-badge">
+                                    <i class="bi bi-person-badge"></i> BananaLord
+                                    <span class="rank-badge rank-vip">VIP</span>
+                                </span>
+                                <span class="text-muted small"><i class="bi bi-clock"></i> 3 часа назад</span>
+                            </div>
+                            <div class="post-stats">
+                                <span><i class="bi bi-chat-fill"></i> 45</span>
+                                <span><i class="bi bi-eye-fill"></i> 289</span>
+                                <span><i class="bi bi-heart-fill"></i> 67</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 3 -->
+                    <div class="forum-post rounded p-3 mb-3">
+                        <div class="mb-2">
+                            <span class="tag tag-tool">ИНСТРУМЕНТ</span>
+                            <h3 class="post-title d-inline">Новый сканер уязвимостей v2.1</h3>
+                        </div>
+                        <p class="mb-3">Обновлен модуль для поиска SQLi. Улучшена скорость работы. Скачать можно с нашего репозитория. Добавлена поддержка автоматической эксплуатации. Полностью бесплатно для членов форума!</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="user-badge">
+                                    <i class="bi bi-person-badge"></i> dev_null
+                                    <span class="rank-badge rank-admin">ADMIN</span>
+                                </span>
+                                <span class="text-muted small"><i class="bi bi-clock"></i> 1 день назад</span>
+                            </div>
+                            <div class="post-stats">
+                                <span><i class="bi bi-chat-fill"></i> 67</span>
+                                <span><i class="bi bi-eye-fill"></i> 512</span>
+                                <span><i class="bi bi-download"></i> 234</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 4 -->
+                    <div class="forum-post rounded p-3 mb-3">
+                        <div class="mb-2">
+                            <span class="tag tag-help">ПОМОЩЬ</span>
+                            <h3 class="post-title d-inline">Не могу обойти WAF</h3>
+                        </div>
+                        <p class="mb-3">Пытаюсь залить шелл на сайт, но WAF блокирует все запросы. Кто может подсказать рабочие пэйлоады? Использую стандартные методы обхода, но не помогает. Буду очень благодарен за помощь!</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="user-badge">
+                                    <i class="bi bi-person-badge"></i> newbie_hacker
+                                    <span class="rank-badge rank-newbie">NEWBIE</span>
+                                </span>
+                                <span class="text-muted small"><i class="bi bi-clock"></i> 2 дня назад</span>
+                            </div>
+                            <div class="post-stats">
+                                <span><i class="bi bi-chat-fill"></i> 34</span>
+                                <span><i class="bi bi-eye-fill"></i> 201</span>
+                                <span><i class="bi bi-heart-fill"></i> 12</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Online Users -->
+                    <div class="sidebar mb-4">
+                        <h5 class="text-white mb-3">
+                            <i class="bi bi-circle-fill text-success"></i> 
+                            Онлайн (<span id="online-users-count">27</span>)
+                        </h5>
+                        <div class="online-user">
+                            <div class="status-dot"></div>
+                            <span>shadow_seller <span class="rank-badge rank-trusted">TRUSTED</span></span>
+                        </div>
+                        <div class="online-user">
+                            <div class="status-dot"></div>
+                            <span>BananaLord <span class="rank-badge rank-vip">VIP</span></span>
+                        </div>
+                        <div class="online-user">
+                            <div class="status-dot"></div>
+                            <span>dev_null <span class="rank-badge rank-admin">ADMIN</span></span>
+                        </div>
+                        <div class="online-user">
+                            <div class="status-dot"></div>
+                            <span>crypto_king <span class="rank-badge rank-vip">VIP</span></span>
+                        </div>
+                        <div class="online-user">
+                            <div class="status-dot"></div>
+                            <span>zero_day <span class="rank-badge rank-trusted">TRUSTED</span></span>
+                        </div>
+                        <div class="online-user">
+                            <div class="status-dot"></div>
+                            <span>mr_robot</span>
+                        </div>
+                        <div class="online-user">
+                            <div class="status-dot"></div>
+                            <span>hack_master</span>
+                        </div>
+                        <small class="text-muted d-block mt-2">+ еще 20 пользователей</small>
+                    </div>
+
+                    <!-- Live Chat -->
+                    <div class="sidebar mb-4">
+                        <h5 class="text-white mb-3">
+                            <span class="activity-indicator"></span>
+                            Живой чат
+                        </h5>
+                        <div class="live-chat p-2" id="live-chat">
+                            <!-- Chat messages will be added here -->
+                        </div>
+                    </div>
+
+                    <!-- Recent Deals -->
+                    <div class="sidebar mb-4">
+                        <h5 class="text-white mb-3"><i class="bi bi-cash-stack"></i> Последние сделки</h5>
+                        <div class="deal-item">
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">RDP доступ</small>
+                                <span class="deal-amount">0.5 BTC</span>
+                            </div>
+                            <small class="text-muted">5 минут назад</small>
+                        </div>
+                        <div class="deal-item">
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">База данных</small>
+                                <span class="deal-amount">1.2 BTC</span>
+                            </div>
+                            <small class="text-muted">23 минуты назад</small>
+                        </div>
+                        <div class="deal-item">
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">Exploit kit</small>
+                                <span class="deal-amount">0.8 BTC</span>
+                            </div>
+                            <small class="text-muted">1 час назад</small>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="sidebar">
+                        <h5 class="text-white mb-3"><i class="bi bi-graph-up"></i> Статистика</h5>
+                        <div class="mb-3">
+                            <small class="text-muted d-block">Всего тем:</small>
+                            <div class="stat-number" id="total-topics">42,069</div>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted d-block">Всего сообщений:</small>
+                            <div class="stat-number" id="total-messages">1,337,228</div>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted d-block">Участников:</small>
+                            <div class="stat-number" id="total-users">13,370</div>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted d-block">Сделок за сегодня:</small>
+                            <div class="stat-number text-success" id="deals-today">47</div>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Новый участник:</small>
+                            <div class="text-info">@anonymous_042</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Modal (остается прежним) -->
+    <div class="modal fade" id="chatModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content chat-modal border-0">
+                <div class="chat-header p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-white mb-0">
+                            <i class="bi bi-shield-fill-exclamation text-warning"></i>
+                            Личные сообщения с <span class="text-success">BananaLord</span>
+                        </h5>
+                        <div class="close-btn" data-bs-dismiss="modal">
+                            <i class="bi bi-x-lg"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="chat-messages p-3 rounded" id="message-list">
+                        <!-- Messages will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        const profileIcon = document.getElementById('profile-icon');
+        const messageList = document.getElementById('message-list');
+        const chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+        const liveChat = document.getElementById('live-chat');
+        const notificationContainer = document.getElementById('notification-container');
+
+        let chatInProgress = false;
+
+        // Live chat messages
+        const chatMessages = [
+            { user: 'shadow_seller', text: 'Кто-нибудь работал с CloudFlare bypass?', time: 'сейчас' },
+            { user: 'zero_day', text: '@shadow_seller есть пара методов, пиши в лс', time: '1 мин' },
+            { user: 'crypto_king', text: 'Продал последнюю базу, спасибо за доверие!', time: '2 мин' },
+            { user: 'mr_robot', text: 'Ищу напарника для проекта, хорошая оплата', time: '3 мин' },
+            { user: 'hack_master', text: 'Новый эксплоит для WordPress готов к продаже', time: '5 мин' },
+            { user: 'BananaLord', text: 'Нужен специалист по SQL injection, срочно!', time: '7 мин' }
+        ];
+
+        // Populate initial chat
+        function populateChat() {
+            chatMessages.forEach((msg, index) => {
+                setTimeout(() => {
+                    const chatHTML = `
+                        <div class="chat-message">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <span class="username">${msg.user}</span>
+                                <span class="time">${msg.time}</span>
+                            </div>
+                            <div class="text">${msg.text}</div>
+                        </div>
+                    `;
+                    liveChat.insertAdjacentHTML('beforeend', chatHTML);
+                    liveChat.scrollTop = liveChat.scrollHeight;
+                }, index * 500);
+            });
+        }
+
+        // Add new chat message periodically
+        const newMessages = [
+            { user: 'dev_null', text: 'Обновил сканер, проверьте новую версию' },
+            { user: 'shadow_seller', text: 'Скинул образцы в тестовую' },
+            { user: 'newbie_hacker', text: 'Спасибо всем за помощь!' },
+            { user: 'crypto_king', text: 'Кто работает с escrow сервисами?' },
+            { user: 'zero_day', text: 'Нашел интересную уязвимость, обсудим?' }
+        ];
+
+        let messageIndex = 0;
+        function addNewChatMessage() {
+            if (messageIndex < newMessages.length) {
+                const msg = newMessages[messageIndex];
+                const chatHTML = `
+                    <div class="chat-message">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <span class="username">${msg.user}</span>
+                            <span class="time">только что</span>
+                        </div>
+                        <div class="text">${msg.text}</div>
+                    </div>
+                `;
+                liveChat.insertAdjacentHTML('beforeend', chatHTML);
+                liveChat.scrollTop = liveChat.scrollHeight;
+                
+                // Remove old messages if too many
+                const messages = liveChat.querySelectorAll('.chat-message');
+                if (messages.length > 8) {
+                    messages[0].remove();
+                }
+                
+                messageIndex++;
+            }
+        }
+
+        // Show notifications
+        const notifications = [
+            { icon: '💰', text: 'Новая сделка: "shadow_seller" продал базу данных за 1.5 BTC' },
+            { icon: '👤', text: 'Пользователь "dark_knight" только что зарегистрировался' },
+            { icon: '🔥', text: 'Тема "RDP доступы оптом" набрала 100+ просмотров' },
+            { icon: '⚠️', text: 'ВНИМАНИЕ: Не работайте с пользователем "scammer123"' },
+            { icon: '✅', text: 'BananaLord получил статус VIP member' }
+        ];
+
+        let notificationIndex = 0;
+        function showNotification() {
+            if (notificationIndex < notifications.length) {
+                const notif = notifications[notificationIndex];
+                const notifHTML = `
+                    <div class="notification-bar p-3 rounded mb-2">
+                        <div class="d-flex align-items-center">
+                            <span class="fs-4 me-3">${notif.icon}</span>
+                            <span class="flex-grow-1">${notif.text}</span>
+                            <button class="btn btn-sm btn-close btn-close-white" onclick="this.parentElement.parentElement.classList.add('fade-out')"></button>
+                        </div>
+                    </div>
+                `;
+                notificationContainer.insertAdjacentHTML('afterbegin', notifHTML);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    const notifs = notificationContainer.querySelectorAll('.notification-bar');
+                    if (notifs.length > 0) {
+                        notifs[notifs.length - 1].classList.add('fade-out');
+                        setTimeout(() => {
+                            notifs[notifs.length - 1].remove();
+                        }, 500);
+                    }
+                }, 5000);
+                
+                notificationIndex++;
+            }
+        }
+
+        // Animate online count
+        function animateOnlineCount() {
+            const onlineCount = document.getElementById('online-count');
+            const onlineUsersCount = document.getElementById('online-users-count');
+            let count = 1337;
+            setInterval(() => {
+                count += Math.floor(Math.random() * 10) - 5;
+                if (count < 1300) count = 1300;
+                if (count > 1400) count = 1400;
+                onlineCount.textContent = count.toLocaleString();
+                
+                const usersCount = Math.floor(count / 50);
+                onlineUsersCount.textContent = usersCount;
+            }, 5000);
+        }
+
+        // Main chat modal functionality
+        const messages = [
+            "У нас тут форум по продаже бананов, сидят в основном поставщики... У меня появился конкурент, нужно убрать его с рынка. Помешать ему продавать бананы в определённый день, обрушить все поставки. Сделаешь?",
+            "Ну раз ты молчишь, значит готов работать.",
+            'Отлично. Раз готов, то вот тебе ссылка на их платформу для поставщиков: <a href="http://YOUR_CTF_LINK_HERE" target="_blank">banana-corp.org</a>. Посмотрим, что ты умеешь.'
+        ];
+
+        profileIcon.addEventListener('click', () => {
+            chatModal.show();
+            if (!chatInProgress) {
+                initiateChatSequence();
+            }
+        });
+
+        function scrollChat() {
+            messageList.scrollTop = messageList.scrollHeight;
+        }
+
+        function showTypingIndicator(callback) {
+            const typingHTML = `
+                <div class="d-flex mb-3 typing-bubble">
+                    <div class="avatar-icon me-3">
+                        <i class="bi bi-incognito text-dark"></i>
+                    </div>
+                    <div class="message-bubble rounded p-3">
+                        <div class="fw-bold text-cyan mb-2">BananaLord</div>
+                        <div class="typing-indicator">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messageList.insertAdjacentHTML('beforeend', typingHTML);
+            scrollChat();
+
+            setTimeout(() => {
+                const typingBubble = messageList.querySelector('.typing-bubble');
+                if (typingBubble) typingBubble.remove();
+                callback();
+            }, 2000 + Math.random() * 1000);
+        }
+
+        function typeMessage(text, callback) {
+            const messageHTML = `
+                <div class="d-flex mb-3 new-message">
+                    <div class="avatar-icon me-3">
+                        <i class="bi bi-incognito text-dark"></i>
+                    </div>
+                    <div class="message-bubble rounded p-3 flex-grow-1">
+                        <div class="fw-bold text-cyan mb-2">BananaLord</div>
+                        <div class="message-text"></div>
+                    </div>
+                </div>
+            `;
+            messageList.insertAdjacentHTML('beforeend', messageHTML);
+            
+            const messageElement = messageList.querySelector('.new-message .message-text');
+            messageElement.parentElement.parentElement.classList.remove('new-message');
+            
+            let i = 0;
+            const speed = 40;
+
+            function typeWriter() {
+                if (i < text.length) {
+                    messageElement.innerHTML += text.charAt(i);
+                    i++;
+                    scrollChat();
+                    setTimeout(typeWriter, speed);
+                } else if (callback) {
+                    setTimeout(callback, 500);
+                }
+            }
+            typeWriter();
+        }
+
+        function initiateChatSequence() {
+            chatInProgress = true;
+            
+            showTypingIndicator(() => {
+                typeMessage(messages[0], () => {
+                    setTimeout(() => {
+                        showTypingIndicator(() => {
+                            typeMessage(messages[1], () => {
+                                setTimeout(() => {
+                                    showTypingIndicator(() => {
+                                        typeMessage(messages[2], () => {
+                                            chatInProgress = false;
+                                        });
+                                    });
+                                }, 1500);
+                            });
+                        });
+                    }, 2500);
+                });
+            });
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            populateChat();
+            animateOnlineCount();
+            
+            // Add new chat messages every 8 seconds
+            setInterval(addNewChatMessage, 8000);
+            
+            // Show notifications every 10 seconds
+            setInterval(showNotification, 10000);
+            showNotification(); // Show first one immediately
+        });
+    </script>
+</body>
+</html>
